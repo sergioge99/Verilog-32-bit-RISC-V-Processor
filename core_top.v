@@ -1,4 +1,4 @@
-`include "core_defines.sv"
+`include "core_defines.v"
 
 module core_top(
   input clock, reset
@@ -9,8 +9,8 @@ wire br_en;
 wire br_addr;
 
 //F-D wires
-wire d_ready_wire;
-wire f_pc_o_wire, instr_wire;
+wire d_ready;
+wire f_pc, instr;
 
 
 //F Stage
@@ -18,12 +18,12 @@ F_top F_top(
   //Inputs
   .clock(clock),
   .reset(reset),
-  .d_ready(d_ready_wire),
+  .d_ready(d_ready),
   .br_en(br_en),
   .br_addr(br_addr),
   //Outputs
-  .f_pc_o(f_pc_o_wire),
-  .instr(instr_wire)
+  .f_pc(f_pc),
+  .instr(instr)
 );
 
 
@@ -32,10 +32,10 @@ D_top D_top(
   //Inputs
   .clock(clock),
   .reset(reset),
-  .d_pc(f_pc_o_wire),
-  .instr(instr_wire),
+  .d_pc(f_pc),
+  .instr(instr),
   //Outputs
-  .d_ready(d_ready_wire)
+  .d_ready(d_ready)
 
 );
 

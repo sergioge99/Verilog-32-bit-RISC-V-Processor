@@ -1,4 +1,4 @@
-`include "core_defines.sv"
+`include "core_defines.v"
 
 module D_top(
   input clock, reset,
