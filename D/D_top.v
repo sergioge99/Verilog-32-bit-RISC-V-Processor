@@ -13,7 +13,7 @@ module D_top(
   output [31:0] dataA, dataB,
   output [3:0] op,
   output [4:0] regA, regB, regD,
-  output [31:0] offset,
+  output [31:0] imm,
   output w_en,
   output mem_en,
   output [5:0] alu_ctl,
@@ -36,7 +36,7 @@ decoder decoder(
 .wEn(w_en),
   // Outputs to Execute/ALU
 .branch_op(is_branch), 
-.imm32(offset),
+.imm32(imm),
 .ALU_Control(alu_ctl),
   // Outputs to Memory
 .mem_wEn(mem_en)
