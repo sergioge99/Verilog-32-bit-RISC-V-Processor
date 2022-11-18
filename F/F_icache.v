@@ -19,7 +19,7 @@ initial begin
   icache[5] <= 32'b00000000000000000000000000000000;
 end
 
-always @(*) begin
+always @(addr) begin
   instr <= icache[addr/4];
 end
 

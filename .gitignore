@@ -1,3 +1,5 @@
-work/**
-pa_core.mpf
-pa_core.cr.mti
+#exclude all
+**
+
+#exceptions
+!**.v

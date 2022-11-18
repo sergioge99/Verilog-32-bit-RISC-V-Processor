@@ -33,6 +33,10 @@ alu alu(
   .branch(br_en)
 );
 
+//esto es temporal
+assign a_ready = 1;
+assign br_en=0;
+
 
 //Updating decode registers
 always @(posedge clock) begin
