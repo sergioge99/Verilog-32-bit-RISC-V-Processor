@@ -5,23 +5,36 @@ module F_top(
   input d_ready,
   input br_en,
   input [31:0] br_addr,
-  output [31:0] f_pc,
-  output [31:0] instr
+  output reg [31:0] fd_pc = 32'd0,
+  output reg [31:0] fd_instr = 32'd0
 );
 
-//Fetch registers
+//PC register
 reg[31:0] PC_reg = 32'd0;
 
-icache icache( .clock(clock), .reset(reset), .addr(PC), .instr(instr));
+//Instruction cache
+wire instr;
+icache icache( .clock(clock), .reset(reset), .addr(PC_reg), .instr(instr));
 
-//Outputs
-assign f_pc = PC;
 
 //Updating fetch registers
 always @(posedge clock) begin
-	if(reset) PC_reg <= 0;
-	else if(d_ready & !br_en) PC_reg <= PC_reg + 32'd4;
-  else if(d_ready & br_en)  PC_reg <= br_addr;
+
+  if(d_ready)begin
+    fd_pc <= PC_reg;
+    fd_instr <= instr;
+    PC_reg <= PC_reg + 32'd4;
+  end
+
+	if(reset)begin
+    PC_reg <= 0;
+  end
+	else if(d_ready & br_en)begin
+    PC_reg <= br_addr;
+  end
+
+
+
 end
 
 

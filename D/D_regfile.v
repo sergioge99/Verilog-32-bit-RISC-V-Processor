@@ -13,7 +13,7 @@ module regfile(
 
 reg   [31:0] reg_file[0:31];
 
-  always@(posedge clock) begin
+  always@(negedge clock) begin
     if (reset) begin 
 	   reg_file[0] <= 0;
 	 end else begin 
@@ -22,6 +22,7 @@ reg   [31:0] reg_file[0:31];
 		end 
 	 end
   end
+  
   
   assign read_data1 = reg_file[read_sel1];
   assign read_data2 = reg_file[read_sel2];	 
