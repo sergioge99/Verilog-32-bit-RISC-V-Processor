@@ -34,7 +34,7 @@ module D_top(
   output reg da_is_branch=0,
 
   // Outputs to Memory
-  output reg da_is_load=0, da_is_store=0
+  output reg da_is_load=0, da_is_store=0, da_is_imm=0
 );
 
 
@@ -48,7 +48,7 @@ wire [31:0] data2;
 wire [31:0] imm32;
 wire [5:0] ALU_Control;
 wire [31:0] target_PC;
-wire is_branch, is_load, is_store, is_wb;
+wire is_branch, is_load, is_store, is_wb, is_imm;
 wire[31:0] instruction = fd_instr;
 wire[11:0] i_imm_orig;
 wire[12:0] sb_imm_orig;
@@ -94,6 +94,9 @@ assign is_wb = ((opcode == 7'b0110011) || (opcode == 7'b0010011) || (opcode == 7
 
 assign is_branch = (opcode == 7'b1100011)? 1:
 					0;
+
+assign is_imm = (opcode == 7'b0010011)? 1:  //addi
+					 0;  //default 
 
 assign ALU_Control = (opcode == 7'b0110011)? 6'b000000:  //add
 					 (opcode == 7'b0010011)? 6'b000000:  //addi
@@ -141,6 +144,7 @@ always @(posedge clock) begin
     da_is_branch <= is_branch;
     da_is_load <= is_load;
     da_is_store <= is_store;
+    da_is_imm <= is_imm;
   end
   else begin
     d_ready <= 0;

@@ -12,7 +12,7 @@ module A_top(
   input [31:0] da_imm32,
   input [5:0] da_ALU_Control,
   input [31:0] da_target_PC,
-  input da_is_branch, da_is_load, da_is_store, da_is_wb,
+  input da_is_branch, da_is_load, da_is_store, da_is_wb, da_is_imm,
 
   output reg [31:0] ac_pc=0,
   output reg [4:0] ac_write_sel=0,
@@ -34,7 +34,8 @@ module A_top(
 assign alu_in1 = da_data1;
 
 // MUX 2
-assign alu_in2 = da_data2;
+assign alu_in2 = (da_is_imm)? da_imm32:
+                  da_data2;
 
 //ALU
 alu alu(

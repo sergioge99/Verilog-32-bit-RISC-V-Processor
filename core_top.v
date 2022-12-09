@@ -43,7 +43,7 @@ wire [31:0] da_data2;
 wire [31:0] da_imm32;
 wire [5:0] da_ALU_Control;
 wire [31:0] da_target_PC;
-wire da_is_branch;
+wire da_is_branch, da_is_imm;
 wire da_is_load, da_is_store;
 
 //D Stage
@@ -71,7 +71,8 @@ D_top D_top(
   .da_target_PC(da_target_PC),
   .da_is_branch(da_is_branch),
   .da_is_load(da_is_load),
-  .da_is_store(da_is_store)
+  .da_is_store(da_is_store),
+  .da_is_imm(da_is_imm)
 );
 
 //A-C wires
@@ -101,6 +102,7 @@ A_top A_top(
   .da_is_branch(da_is_branch),
   .da_is_load(da_is_load),
   .da_is_store(da_is_store),
+  .da_is_imm(da_is_imm),
   //Outputs
   .ac_pc(ac_pc),
   .br_en(br_en),
