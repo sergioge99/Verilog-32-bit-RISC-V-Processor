@@ -14,14 +14,14 @@ module A_top(
   input [31:0] da_target_PC,
   input da_is_branch, da_is_load, da_is_store, da_is_wb,
 
-  output reg [31:0] ac_pc,
-  output reg [4:0] ac_write_sel,
-  output reg ac_is_load, ac_is_store, ac_is_wb,
+  output reg [31:0] ac_pc=0,
+  output reg [4:0] ac_write_sel=0,
+  output reg ac_is_load=0, ac_is_store=0, ac_is_wb=0,
 
-  output reg a_ready,
-  output reg [31:0] ALU_result,
-  output reg [31:0] br_addr,
-  output reg br_en
+  output reg a_ready=0,
+  output reg [31:0] ALU_result=0,
+  output reg [31:0] br_addr=0,
+  output reg br_en =0
 
 );
 
@@ -62,7 +62,7 @@ always @(posedge clock) begin
     br_en <= jump;
   end 
   else begin
-    a_ready<=0;
+    a_ready <= 0;
   end
 end
 

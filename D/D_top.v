@@ -16,25 +16,25 @@ module D_top(
   input [31:0] fd_instr,
 
   // Outputs to Fetch
-  output reg d_ready,
+  output reg d_ready=0,
 
   // Outputs to WB
-  output reg [4:0] da_write_sel,
-  output reg da_is_wb,
+  output reg [4:0] da_write_sel=0,
+  output reg da_is_wb=0,
 
   // Outputs to Execute/ALU
-  output reg [31:0] da_pc,
-  output reg [4:0] da_read_sel1,
-  output reg [4:0] da_read_sel2,
-  output reg [31:0] da_data1,
-  output reg [31:0] da_data2,
-  output reg [31:0] da_imm32,
-  output reg [5:0] da_ALU_Control,
-  output reg [31:0] da_target_PC,
-  output reg da_is_branch,
+  output reg [31:0] da_pc=0,
+  output reg [4:0] da_read_sel1=0,
+  output reg [4:0] da_read_sel2=0,
+  output reg [31:0] da_data1=0,
+  output reg [31:0] da_data2=0,
+  output reg [31:0] da_imm32=0,
+  output reg [5:0] da_ALU_Control=0,
+  output reg [31:0] da_target_PC=0,
+  output reg da_is_branch=0,
 
   // Outputs to Memory
-  output reg da_is_load, da_is_store
+  output reg da_is_load=0, da_is_store=0
 );
 
 
@@ -141,6 +141,9 @@ always @(posedge clock) begin
     da_is_branch <= is_branch;
     da_is_load <= is_load;
     da_is_store <= is_store;
+  end
+  else begin
+    d_ready <= 0;
   end
 end
 

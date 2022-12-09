@@ -7,11 +7,11 @@ module C_top(
   input [4:0] ac_write_sel,
   input [31:0] ALU_result,
   input ac_is_load, ac_is_store, ac_is_wb,
-  output reg c_ready,
-  output reg [31:0] cw_pc,
-  output reg [4:0] cw_write_sel,
-  output reg [31:0] cw_result,
-  output reg cw_is_wb
+  output reg c_ready=0,
+  output reg [31:0] cw_pc=0,
+  output reg [4:0] cw_write_sel=0,
+  output reg [31:0] cw_result=0,
+  output reg cw_is_wb=0
 );
 
 // Internal wires

@@ -32,7 +32,7 @@ wire [4:0] sel_regfile;
 wire [31:0] data_regfile;
 
 //D-A wires
-wire da_pc;
+wire [31:0] da_pc;
 wire a_ready;
 wire [4:0] da_write_sel;
 wire da_is_wb;
@@ -103,6 +103,8 @@ A_top A_top(
   .da_is_store(da_is_store),
   //Outputs
   .ac_pc(ac_pc),
+  .br_en(br_en),
+  .br_addr(br_addr),
   .ac_write_sel(ac_write_sel),
   .ac_is_load(ac_is_load), 
   .ac_is_store(ac_is_store), 
@@ -145,6 +147,7 @@ W_top W_top(
   .cw_write_sel(cw_write_sel),
   .cw_result(cw_result),
   .cw_is_wb(cw_is_wb),
+  .w_ready(w_ready),
   .w_write_sel(sel_regfile),
   .w_result(data_regfile),
   .w_is_wb(w_regfile)

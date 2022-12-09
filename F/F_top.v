@@ -5,15 +5,15 @@ module F_top(
   input d_ready,
   input br_en,
   input [31:0] br_addr,
-  output reg [31:0] fd_pc = 32'd0,
-  output reg [31:0] fd_instr = 32'd0
+  output reg [31:0] fd_pc = 0,
+  output reg [31:0] fd_instr = 0
 );
 
 //PC register
-reg[31:0] PC_reg = 32'd0;
+reg[31:0] PC_reg = 0;
 
 //Instruction cache
-wire instr;
+wire [31:0] instr;
 icache icache( .clock(clock), .reset(reset), .addr(PC_reg), .instr(instr));
 
 
