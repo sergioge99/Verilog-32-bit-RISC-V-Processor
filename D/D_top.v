@@ -9,14 +9,14 @@ module D_top(
   input [31:0] data_regfile,
 
   // Inputs from Alu
-  input a_ready,
+  input br_en,
   
   // Inputs from Fetch
   input [31:0] fd_pc,
   input [31:0] fd_instr,
 
   // Outputs to Fetch
-  output reg d_ready=0,
+  output stall,
 
   // Outputs to WB
   output reg [4:0] da_write_sel=0,
@@ -125,29 +125,61 @@ regfile regfile(
 .read_data2(data2)
 );
 
+// Stall control
+assign stall = (da_is_load && (read_sel1==da_read_sel1 || read_sel2==da_read_sel2))? 1:
+              0;
 
 //Updating decode registers
 always @(posedge clock) begin
-  if(a_ready)
-  begin
-    da_pc <= fd_pc;
-    d_ready <= 1;
-    da_write_sel <= write_sel;
-    da_is_wb <= is_wb;
-    da_read_sel1 <= read_sel1;
-    da_read_sel2 <= read_sel2;
-    da_data1 <= data1;
-    da_data2 <= data2;
-    da_imm32 <= imm32;
-    da_ALU_Control <= ALU_Control;
-    da_target_PC <= target_PC;
-    da_is_branch <= is_branch;
-    da_is_load <= is_load;
-    da_is_store <= is_store;
-    da_is_imm <= is_imm;
+  if(!stall)begin
+    if(!br_en)begin
+      da_pc <= fd_pc;
+      da_write_sel <= write_sel;
+      da_is_wb <= is_wb;
+      da_read_sel1 <= read_sel1;
+      da_read_sel2 <= read_sel2;
+      da_data1 <= data1;
+      da_data2 <= data2;
+      da_imm32 <= imm32;
+      da_ALU_Control <= ALU_Control;
+      da_target_PC <= target_PC;
+      da_is_branch <= is_branch;
+      da_is_load <= is_load;
+      da_is_store <= is_store;
+      da_is_imm <= is_imm;
+    end
+    else begin
+      da_pc <= 0;
+      da_write_sel <= 0;
+      da_is_wb <= 0;
+      da_read_sel1 <= 0;
+      da_read_sel2 <= 0;
+      da_data1 <= 0;
+      da_data2 <= 0;
+      da_imm32 <= 0;
+      da_ALU_Control <= 0;
+      da_target_PC <= 0;
+      da_is_branch <= 0;
+      da_is_load <= 0;
+      da_is_store <= 0;
+      da_is_imm <= 0;
+    end
   end
   else begin
-    d_ready <= 0;
+      da_pc <= 0;
+      da_write_sel <= 0;
+      da_is_wb <= 0;
+      da_read_sel1 <= 0;
+      da_read_sel2 <= 0;
+      da_data1 <= 0;
+      da_data2 <= 0;
+      da_imm32 <= 0;
+      da_ALU_Control <= 0;
+      da_target_PC <= 0;
+      da_is_branch <= 0;
+      da_is_load <= 0;
+      da_is_store <= 0;
+      da_is_imm <= 0;
   end
 end
 

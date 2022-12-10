@@ -9,16 +9,15 @@ wire br_en;
 wire [31:0] br_addr;
 
 //F-D wires
-wire d_ready;
 wire [31:0] fd_pc, fd_instr;
-
+wire stall;
 
 //F Stage
 F_top F_top(
   //Inputs
   .clock(clock),
   .reset(reset),
-  .d_ready(d_ready),
+  .stall(stall),
   .br_en(br_en),
   .br_addr(br_addr),
   //Outputs
@@ -33,7 +32,6 @@ wire [31:0] data_regfile;
 
 //D-A wires
 wire [31:0] da_pc;
-wire a_ready;
 wire [4:0] da_write_sel;
 wire da_is_wb;
 wire [4:0] da_read_sel1;
@@ -51,15 +49,15 @@ D_top D_top(
   //Inputs
   .clock(clock),
   .reset(reset),
+  .br_en(br_en),
   .fd_pc(fd_pc),
   .fd_instr(fd_instr),
-  .a_ready(a_ready),
   .w_regfile(w_regfile),
   .sel_regfile(sel_regfile),
   .data_regfile(data_regfile),
   //Outputs
   .da_pc(da_pc),
-  .d_ready(d_ready),
+  .stall(stall),
   .da_write_sel(da_write_sel),
   .da_is_wb(da_is_wb),
   .da_read_sel1(da_read_sel1),
@@ -76,11 +74,16 @@ D_top D_top(
 );
 
 //A-C wires
-wire c_ready;
 wire [31:0] ac_pc;
 wire [4:0] ac_write_sel;
 wire ac_is_load, ac_is_store, ac_is_wb;
 wire [31:0] ALU_result;
+
+//C-WB wires
+wire [31:0] cw_pc;
+wire [4:0] cw_write_sel;
+wire [31:0] cw_result;
+wire cw_is_wb;
 
 
 //A Stage
@@ -89,7 +92,6 @@ A_top A_top(
   .clock(clock),
   .reset(reset),
   .da_pc(da_pc),
-  .c_ready(c_ready),
   .da_write_sel(da_write_sel),
   .da_is_wb(da_is_wb),
   .da_read_sel1(da_read_sel1),
@@ -103,6 +105,9 @@ A_top A_top(
   .da_is_load(da_is_load),
   .da_is_store(da_is_store),
   .da_is_imm(da_is_imm),
+  .cw_write_sel(cw_write_sel),
+  .cw_result(cw_result),
+  .cw_is_wb(cw_is_wb),
   //Outputs
   .ac_pc(ac_pc),
   .br_en(br_en),
@@ -111,29 +116,21 @@ A_top A_top(
   .ac_is_load(ac_is_load), 
   .ac_is_store(ac_is_store), 
   .ac_is_wb(ac_is_wb),
-  .a_ready(a_ready),
   .ALU_result(ALU_result)
 );
 
-//C-WB wires
-wire w_ready;
-wire [31:0] cw_pc;
-wire [4:0] cw_write_sel;
-wire [31:0] cw_result;
-wire cw_is_wb;
+
 
 //C Stage
 C_top C_top(
   .clock(clock),
   .reset(reset),
-  .w_ready(w_ready),
   .ac_pc(ac_pc),
   .ac_write_sel(ac_write_sel),
   .ALU_result(ALU_result),
   .ac_is_load(ac_is_load), 
   .ac_is_store(ac_is_store), 
   .ac_is_wb(ac_is_wb),
-  .c_ready(c_ready),
   .cw_pc(cw_pc),
   .cw_write_sel(cw_write_sel),
   .cw_result(cw_result),
@@ -149,7 +146,6 @@ W_top W_top(
   .cw_write_sel(cw_write_sel),
   .cw_result(cw_result),
   .cw_is_wb(cw_is_wb),
-  .w_ready(w_ready),
   .w_write_sel(sel_regfile),
   .w_result(data_regfile),
   .w_is_wb(w_regfile)

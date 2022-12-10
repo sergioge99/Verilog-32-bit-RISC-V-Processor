@@ -18,8 +18,8 @@ initial begin
     end
 
   dcache[8] <= 3;
-  dcache[8] <= 2;
-  dcache[8] <= 1;
+  dcache[9] <= 2;
+  dcache[10] <= 1;
 end
 
 assign data = dcache[addr/4];
