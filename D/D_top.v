@@ -108,7 +108,7 @@ assign ALU_Control = (opcode == 7'b0110011)? 6'b000000:  //add
 
 
 //target PC calculations 					 
-assign target_PC = (opcode == 7'b1100011)? (fd_pc + sb_imm_32[15:0]): //branch instructions 
+assign target_PC = (opcode == 7'b1100011)? (fd_pc + sb_imm_32): //branch instructions 
 						 0; 
 
 
@@ -126,7 +126,7 @@ regfile regfile(
 );
 
 // Stall control
-assign stall = (da_is_load && (read_sel1==da_read_sel1 || read_sel2==da_read_sel2))? 1:
+assign stall = (da_is_load && (read_sel1==da_write_sel || read_sel2==da_write_sel))? 1:
               0;
 
 //Updating decode registers

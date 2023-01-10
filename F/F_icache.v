@@ -18,18 +18,18 @@ initial begin
     end
 
   icache[0] <= 0;
-  icache[1] <= 32'h08000213;
-  icache[2] <= 32'h000000b3;
-  icache[3] <= 32'h04000113;
-  icache[4] <= 32'h000001b3;
-  icache[5] <= 32'h00000297;
-  icache[6] <= 32'h0002a283;//load
-  icache[7] <= 0;//32'h005080b3;
-  icache[8] <= 0;//32'h00118193;
-  icache[9] <= 0;//32'h00410113;
-  icache[10] <= 0;//32'hfe4196e3;
-  icache[11] <= 0;//32'h00000017;
-  icache[12] <= 0;//32'h00102023;
+  icache[1] <= 32'h08000213;//addi x4 x0 128
+  icache[2] <= 32'h000000b3;//add x1 x0 x0
+  icache[3] <= 32'h04000113;//addi x2 x0 64
+  icache[4] <= 32'h000001b3;//add x3 x0 x0
+  icache[5] <= 32'h00012283;//lw x5 0(x2)
+  icache[6] <= 32'h005080B3;//add x1 x1 x5
+  icache[7] <= 32'h00118193;//addi x3 x3 1
+  icache[8] <= 32'h00410113;//addi x2 x2 4
+  icache[9] <= 32'hFE4198E3;//bne x3 x4 -16
+  icache[10] <= 32'h00112023;//sw x1 0(x2)
+  icache[11] <= 0;
+  icache[12] <= 0;
   icache[13] <= 0;
   icache[14] <= 0;
   icache[15] <= 0;
