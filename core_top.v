@@ -40,8 +40,7 @@ wire [31:0] da_data1;
 wire [31:0] da_data2;
 wire [31:0] da_imm32;
 wire [5:0] da_ALU_Control;
-wire [31:0] da_target_PC;
-wire da_is_branch, da_is_imm;
+wire da_is_imm;
 wire da_is_load, da_is_store;
 
 //D Stage
@@ -49,7 +48,7 @@ D_top D_top(
   //Inputs
   .clock(clock),
   .reset(reset),
-  .br_en(br_en),
+  
   .fd_pc(fd_pc),
   .fd_instr(fd_instr),
   .w_regfile(w_regfile),
@@ -66,8 +65,8 @@ D_top D_top(
   .da_data2(da_data2),
   .da_imm32(da_imm32),
   .da_ALU_Control(da_ALU_Control),
-  .da_target_PC(da_target_PC),
-  .da_is_branch(da_is_branch),
+  .branch_PC(br_addr),
+  .branch_en(br_en),
   .da_is_load(da_is_load),
   .da_is_store(da_is_store),
   .da_is_imm(da_is_imm)
@@ -100,8 +99,6 @@ A_top A_top(
   .da_data2(da_data2),
   .da_imm32(da_imm32),
   .da_ALU_Control(da_ALU_Control),
-  .da_target_PC(da_target_PC),
-  .da_is_branch(da_is_branch),
   .da_is_load(da_is_load),
   .da_is_store(da_is_store),
   .da_is_imm(da_is_imm),
@@ -110,8 +107,6 @@ A_top A_top(
   .cw_is_wb(cw_is_wb),
   //Outputs
   .ac_pc(ac_pc),
-  .br_en(br_en),
-  .br_addr(br_addr),
   .ac_write_sel(ac_write_sel),
   .ac_is_load(ac_is_load), 
   .ac_is_store(ac_is_store), 

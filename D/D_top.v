@@ -7,16 +7,14 @@ module D_top(
   input w_regfile,
   input [4:0] sel_regfile,
   input [31:0] data_regfile,
-
-  // Inputs from Alu
-  input br_en,
   
   // Inputs from Fetch
   input [31:0] fd_pc,
   input [31:0] fd_instr,
 
   // Outputs to Fetch
-  output stall,
+  output stall, branch_en,
+  output [31:0] branch_PC,
 
   // Outputs to WB
   output reg [4:0] da_write_sel=0,
@@ -30,8 +28,6 @@ module D_top(
   output reg [31:0] da_data2=0,
   output reg [31:0] da_imm32=0,
   output reg [5:0] da_ALU_Control=0,
-  output reg [31:0] da_target_PC=0,
-  output reg da_is_branch=0,
 
   // Outputs to Memory
   output reg da_is_load=0, da_is_store=0, da_is_imm=0
@@ -47,8 +43,7 @@ wire [31:0] data1;
 wire [31:0] data2;
 wire [31:0] imm32;
 wire [5:0] ALU_Control;
-wire [31:0] target_PC;
-wire is_branch, is_load, is_store, is_wb, is_imm;
+wire is_load, is_store, is_wb, is_imm;
 wire[31:0] instruction = fd_instr;
 wire[11:0] i_imm_orig;
 wire[12:0] sb_imm_orig;
@@ -79,7 +74,6 @@ assign sb_imm_32 = { {19{sb_imm_orig[12]}}, sb_imm_orig}; //SB-type
 
 assign imm32 =  (opcode == 7'b0010011)? i_imm_32:  //I-type
 					 (opcode == 7'b0000011)? i_imm_32:  //Load
-					 (opcode == 7'b1100011)? sb_imm_32: //Branches
 					 0;  //default 
 
 
@@ -92,9 +86,6 @@ assign is_store = (opcode == 7'b0100011)? 1:
 assign is_wb = ((opcode == 7'b0110011) || (opcode == 7'b0010011) || (opcode == 7'b0000011))? 1:
 				0;
 
-assign is_branch = (opcode == 7'b1100011)? 1:
-					0;
-
 assign is_imm = (opcode == 7'b0010011)? 1:  //addi
 					 0;  //default 
 
@@ -102,13 +93,11 @@ assign ALU_Control = (opcode == 7'b0110011)? 6'b000000:  //add
 					 (opcode == 7'b0010011)? 6'b000000:  //addi
 					 (opcode == 7'b0000011)? 6'b000000:  //Load
 					 (opcode == 7'b0100011)? 6'b000000:  //Store
-					 ((opcode == 7'b1100011) && (funct3 == 3'b000))? 6'b010000: //beq
-					 ((opcode == 7'b1100011) && (funct3 == 3'b001))? 6'b010001: //bne
 					 0;  //default 
 
 
-//target PC calculations 					 
-assign target_PC = (opcode == 7'b1100011)? (fd_pc + sb_imm_32): //branch instructions 
+//branch PC calculations 					 
+assign branch_PC = (opcode == 7'b1100011)? (fd_pc + sb_imm_32): //branch instructions 
 						 0; 
 
 
@@ -129,10 +118,15 @@ regfile regfile(
 assign stall = (da_is_load && (read_sel1==da_write_sel || read_sel2==da_write_sel))? 1:
               0;
 
+//branch test
+assign branch_en = ((opcode == 7'b1100011) && (funct3 == 3'b000) && (data1 == data2))? 1: //beq
+					 ((opcode == 7'b1100011) && (funct3 == 3'b001)  && (data1 != data2))? 1: //bne
+           0;
+
 //Updating decode registers
 always @(posedge clock) begin
   if(!stall)begin
-    if(!br_en)begin
+    if(!branch_en)begin
       da_pc <= fd_pc;
       da_write_sel <= write_sel;
       da_is_wb <= is_wb;
@@ -142,8 +136,6 @@ always @(posedge clock) begin
       da_data2 <= data2;
       da_imm32 <= imm32;
       da_ALU_Control <= ALU_Control;
-      da_target_PC <= target_PC;
-      da_is_branch <= is_branch;
       da_is_load <= is_load;
       da_is_store <= is_store;
       da_is_imm <= is_imm;
@@ -158,8 +150,6 @@ always @(posedge clock) begin
       da_data2 <= 0;
       da_imm32 <= 0;
       da_ALU_Control <= 0;
-      da_target_PC <= 0;
-      da_is_branch <= 0;
       da_is_load <= 0;
       da_is_store <= 0;
       da_is_imm <= 0;
@@ -175,8 +165,6 @@ always @(posedge clock) begin
       da_data2 <= 0;
       da_imm32 <= 0;
       da_ALU_Control <= 0;
-      da_target_PC <= 0;
-      da_is_branch <= 0;
       da_is_load <= 0;
       da_is_store <= 0;
       da_is_imm <= 0;

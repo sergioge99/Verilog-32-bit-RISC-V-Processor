@@ -10,8 +10,7 @@ module A_top(
   input [31:0] da_data2,
   input [31:0] da_imm32,
   input [5:0] da_ALU_Control,
-  input [31:0] da_target_PC,
-  input da_is_branch, da_is_load, da_is_store, da_is_wb, da_is_imm,
+  input da_is_load, da_is_store, da_is_wb, da_is_imm,
 
 //Bypasses
   input cw_is_wb,
@@ -23,9 +22,7 @@ module A_top(
   output reg [4:0] ac_write_sel=0,
   output reg ac_is_load=0, ac_is_store=0, ac_is_wb=0,
 
-  output reg [31:0] ALU_result=0,
-  output reg [31:0] br_addr=0,
-  output reg br_en =0
+  output reg [31:0] ALU_result=0
 
 );
 
@@ -47,12 +44,10 @@ assign alu_in2 = (da_is_imm)? da_imm32:
 
 //ALU
 alu alu(
-  .branch_op(da_is_branch),
   .ALU_Control(da_ALU_Control),
   .operand_A(alu_in1),
   .operand_B(alu_in2),
-  .ALU_result(alu_out),
-  .branch(jump)
+  .ALU_result(alu_out)
 );
 
 
@@ -65,8 +60,6 @@ always @(posedge clock) begin
     ac_is_store <= da_is_store;
     ac_is_wb <= da_is_wb;
     ALU_result <= alu_out;
-    br_addr <= da_target_PC;
-    br_en <= jump;
   end 
 end
 
