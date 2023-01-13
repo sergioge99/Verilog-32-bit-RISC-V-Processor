@@ -4,12 +4,13 @@ module C_top(
   input clock, reset,
   input [31:0] ac_pc,
   input [4:0] ac_write_sel,
-  input [31:0] ALU_result,
+  input [31:0] ALU_result, ac_data2,
   input ac_is_load, ac_is_store, ac_is_wb,
   output reg [31:0] cw_pc=0,
   output reg [4:0] cw_write_sel=0,
   output reg [31:0] cw_result=0,
-  output reg cw_is_wb=0
+  output reg cw_is_wb=0,
+  output dcache_stall
 );
 
 // Internal wires
@@ -18,12 +19,12 @@ wire [31:0] result = (ac_is_load)? data:
                      ALU_result;
 
 //Instruction cache
-dcache dcache( .clock(clock), .reset(reset), .addr(ALU_result), .data(data));
+dcache dcache( .clk(clock), .reset(reset), .addr(ALU_result), .data(ac_data2), .is_load(ac_is_load), .is_store(ac_is_store), .out(data), .stall(dcache_stall));
 
 
 //Updating decode registers
 always @(posedge clock) begin
-  if(1)
+  if(!dcache_stall)
   begin
     cw_pc <= ac_pc;
     cw_write_sel <= ac_write_sel;

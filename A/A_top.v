@@ -2,6 +2,7 @@
 
 module A_top(
   input clock, reset,
+  input dcache_stall,
   input [31:0] da_pc,
   input [4:0] da_write_sel,
   input [4:0] da_read_sel1,
@@ -22,7 +23,8 @@ module A_top(
   output reg [4:0] ac_write_sel=0,
   output reg ac_is_load=0, ac_is_store=0, ac_is_wb=0,
 
-  output reg [31:0] ALU_result=0
+  output reg [31:0] ALU_result=0,
+  output reg [31:0] ac_data2
 
 );
 
@@ -53,13 +55,14 @@ alu alu(
 
 //Updating decode registers
 always @(posedge clock) begin
-  if(1) begin
+  if(!dcache_stall) begin
     ac_pc <= da_pc;
     ac_write_sel <= da_write_sel;
     ac_is_load <= da_is_load;
     ac_is_store <= da_is_store;
     ac_is_wb <= da_is_wb;
     ALU_result <= alu_out;
+    ac_data2 <= da_data2;
   end 
 end
 

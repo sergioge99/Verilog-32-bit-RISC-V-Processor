@@ -18,7 +18,7 @@ initial begin
     end
 
   icache[0] <= 0;
-  icache[1] <= 32'h08000213;//addi x4 x0 128
+  icache[1] <= 32'h00B00213;//addi x4 x0 11
   icache[2] <= 32'h000000b3;//add x1 x0 x0
   icache[3] <= 32'h04000113;//addi x2 x0 64
   icache[4] <= 32'h000001b3;//add x3 x0 x0
