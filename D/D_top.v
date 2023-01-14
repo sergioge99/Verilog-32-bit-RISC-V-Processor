@@ -2,7 +2,7 @@
 
 module D_top(
   input clock, reset,
-  input dcache_stall,
+  input dcache_stall,icache_stall,
   //Inputs from WB
   input w_regfile,
   input [4:0] sel_regfile,
@@ -121,8 +121,8 @@ assign branch_en = ((opcode == 7'b1100011) && (funct3 == 3'b000) && (data1 == da
 
 //Updating decode registers
 always @(posedge clock) begin
-  if(!stall && !dcache_stall)begin
-    if(!branch_en)begin
+  if(!dcache_stall && !icache_stall)begin
+    if(!branch_en && !stall)begin
       da_pc <= fd_pc;
       da_write_sel <= write_sel;
       da_is_wb <= is_wb;
@@ -150,20 +150,6 @@ always @(posedge clock) begin
       da_is_store <= 0;
       da_is_imm <= 0;
     end
-  end
-  else begin
-      da_pc <= 0;
-      da_write_sel <= 0;
-      da_is_wb <= 0;
-      da_read_sel1 <= 0;
-      da_read_sel2 <= 0;
-      da_data1 <= 0;
-      da_data2 <= 0;
-      da_imm32 <= 0;
-      da_ALU_Control <= 0;
-      da_is_load <= 0;
-      da_is_store <= 0;
-      da_is_imm <= 0;
   end
 end
 

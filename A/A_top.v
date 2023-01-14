@@ -2,7 +2,7 @@
 
 module A_top(
   input clock, reset,
-  input dcache_stall,
+  input dcache_stall,icache_stall,
   input [31:0] da_pc,
   input [4:0] da_write_sel,
   input [4:0] da_read_sel1,
@@ -55,7 +55,7 @@ alu alu(
 
 //Updating decode registers
 always @(posedge clock) begin
-  if(!dcache_stall) begin
+  if(!dcache_stall && !icache_stall) begin
     ac_pc <= da_pc;
     ac_write_sel <= da_write_sel;
     ac_is_load <= da_is_load;

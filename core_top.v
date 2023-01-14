@@ -10,7 +10,7 @@ wire [31:0] br_addr;
 
 //F-D wires
 wire [31:0] fd_pc, fd_instr;
-wire stall, dcache_stall;
+wire stall, dcache_stall, icache_stall;
 
 //F Stage
 F_top F_top(
@@ -23,7 +23,8 @@ F_top F_top(
   .br_addr(br_addr),
   //Outputs
   .fd_pc(fd_pc),
-  .fd_instr(fd_instr)
+  .fd_instr(fd_instr),
+  .icache_stall(icache_stall)
 );
 
 //W-D wires
@@ -50,6 +51,7 @@ D_top D_top(
   .clock(clock),
   .reset(reset),
   .dcache_stall(dcache_stall),
+  .icache_stall(icache_stall),
   .fd_pc(fd_pc),
   .fd_instr(fd_instr),
   .w_regfile(w_regfile),
@@ -92,6 +94,7 @@ A_top A_top(
   .clock(clock),
   .reset(reset),
   .dcache_stall(dcache_stall),
+  .icache_stall(icache_stall),
   .da_pc(da_pc),
   .da_write_sel(da_write_sel),
   .da_is_wb(da_is_wb),
@@ -123,6 +126,7 @@ A_top A_top(
 C_top C_top(
   .clock(clock),
   .reset(reset),
+  .icache_stall(icache_stall),
   .ac_pc(ac_pc),
   .ac_write_sel(ac_write_sel),
   .ALU_result(ALU_result),

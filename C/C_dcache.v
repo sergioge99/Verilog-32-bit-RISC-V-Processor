@@ -45,10 +45,10 @@ assign index = addr[5:4];
 assign word = addr[3:2];
 
 //reading the right word
-assign out = (word==0) ? cache[index][31:0] :
-			(word==1) ? cache[index][63:32] :
-			(word==2) ? cache[index][95:64] :
-			(word==3) ? cache[index][127:96] :
+assign out = (is_load && word==0) ? cache[index][31:0] :
+			(is_load && word==1) ? cache[index][63:32] :
+			(is_load && word==2) ? cache[index][95:64] :
+			(is_load && word==3) ? cache[index][127:96] :
 			0;
 
 //stop pipeline when main memory is accessed

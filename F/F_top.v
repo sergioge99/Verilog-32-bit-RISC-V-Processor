@@ -7,7 +7,8 @@ module F_top(
   input br_en,
   input [31:0] br_addr,
   output reg [31:0] fd_pc = 0,
-  output reg [31:0] fd_instr = 0
+  output reg [31:0] fd_instr = 0,
+  output icache_stall
 );
 
 //PC register
@@ -15,12 +16,12 @@ reg[31:0] PC_reg = 0;
 
 //Instruction cache
 wire [31:0] instr;
-icache icache( .clock(clock), .reset(reset), .addr(PC_reg), .instr(instr));
+icache icache( .clk(clock), .reset(reset), .addr(PC_reg), .out(instr), .stall(icache_stall));
 
 
 //Updating fetch registers
 always @(posedge clock) begin
-  if(!stall && !dcache_stall)begin
+  if(!stall && !dcache_stall && !icache_stall)begin
     if(!br_en)begin
       fd_pc <= PC_reg;
       fd_instr <= instr;
