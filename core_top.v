@@ -10,14 +10,15 @@ wire [31:0] br_addr;
 
 //F-D wires
 wire [31:0] fd_pc, fd_instr;
-wire stall, dcache_stall, icache_stall;
+wire load_stall, branch_stall, dcache_stall, icache_stall;
 
 //F Stage
 F_top F_top(
   //Inputs
   .clock(clock),
   .reset(reset),
-  .stall(stall),
+  .load_stall(load_stall),
+  .branch_stall(branch_stall),
   .dcache_stall(dcache_stall),
   .br_en(br_en),
   .br_addr(br_addr),
@@ -45,6 +46,12 @@ wire [5:0] da_ALU_Control;
 wire da_is_imm;
 wire da_is_load, da_is_store;
 
+//A-C wires
+wire [31:0] ac_pc;
+wire [4:0] ac_write_sel;
+wire ac_is_load, ac_is_store, ac_is_wb;
+wire [31:0] ALU_result, ac_data2;
+
 //D Stage
 D_top D_top(
   //Inputs
@@ -57,9 +64,13 @@ D_top D_top(
   .w_regfile(w_regfile),
   .sel_regfile(sel_regfile),
   .data_regfile(data_regfile),
+  .ac_is_wb(ac_is_wb),
+  .ac_write_sel(ac_write_sel),
+  .ac_result(ALU_result),
   //Outputs
   .da_pc(da_pc),
-  .stall(stall),
+  .load_stall(load_stall),
+  .branch_stall(branch_stall),
   .da_write_sel(da_write_sel),
   .da_is_wb(da_is_wb),
   .da_read_sel1(da_read_sel1),
@@ -75,11 +86,7 @@ D_top D_top(
   .da_is_imm(da_is_imm)
 );
 
-//A-C wires
-wire [31:0] ac_pc;
-wire [4:0] ac_write_sel;
-wire ac_is_load, ac_is_store, ac_is_wb;
-wire [31:0] ALU_result, ac_data2;
+
 
 //C-WB wires
 wire [31:0] cw_pc;

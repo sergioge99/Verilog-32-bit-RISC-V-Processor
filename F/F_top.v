@@ -2,7 +2,8 @@
 
 module F_top(
   input clock, reset,
-  input stall,
+  input load_stall,
+  input branch_stall,
   input dcache_stall,
   input br_en,
   input [31:0] br_addr,
@@ -21,7 +22,7 @@ icache icache( .clk(clock), .reset(reset), .addr(PC_reg), .out(instr), .stall(ic
 
 //Updating fetch registers
 always @(posedge clock) begin
-  if(!stall && !dcache_stall && !icache_stall)begin
+  if(!load_stall && !dcache_stall && !icache_stall && !branch_stall)begin
     if(!br_en)begin
       fd_pc <= PC_reg;
       fd_instr <= instr;

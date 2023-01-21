@@ -14,12 +14,12 @@ module C_top(
 );
 
 // Internal wires
-wire [31:0] data;
-wire [31:0] result = (ac_is_load)? data:
+wire [31:0] cache_out;
+wire [31:0] result = (ac_is_load)? cache_out:
                      ALU_result;
 
 //Instruction cache
-dcache dcache( .clk(clock), .reset(reset), .addr(ALU_result), .data(ac_data2), .is_load(ac_is_load), .is_store(ac_is_store), .out(data), .stall(dcache_stall));
+dcache dcache( .clk(clock), .reset(reset), .addr(ALU_result), .data(ac_data2), .is_load(ac_is_load), .is_store(ac_is_store), .out(cache_out), .stall(dcache_stall));
 
 
 //Updating decode registers

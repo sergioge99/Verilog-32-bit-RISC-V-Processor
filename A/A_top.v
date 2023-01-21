@@ -29,9 +29,7 @@ module A_top(
 );
 
 //Internal wires
-  wire [31:0] alu_in1, alu_in2;
-  wire [31:0] alu_out;
-  wire jump;
+  wire [31:0] alu_in1, alu_in2, alu_out;
 
 // MUX 1
 assign alu_in1 = (ac_is_wb && !ac_is_load && ac_write_sel==da_read_sel1)? ALU_result:

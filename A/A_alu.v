@@ -20,7 +20,7 @@ assign SGTE = s_op_a >= s_op_b;
 assign ALU_result = (ALU_Control == 6'b000000) ? (operand_A + operand_B): //Add (LUI,AUIPC,LW,SW,ADDI,ADD)
 						  (ALU_Control == 6'b001000) ? (operand_A - operand_B): //Sub (SUB)
 						  
-						  (ALU_Control == 6'b000010) ? (SLT): // Signed Less Than (SLTI,SLT,BLT)
+						  (ALU_Control == 6'b000010) ? (operand_A * operand_B): //(SLT): // Signed Less Than (SLTI,SLT,BLT)
 						  (ALU_Control == 6'b010110 || ALU_Control == 6'b000011) ? (operand_A < operand_B): //Unsigned Less Than (BLTU,SLTIU,SLTU)
 						  (ALU_Control == 6'b010101) ? (SGTE): // Signed Greater Than or Equal To (BGE)
 						  (ALU_Control == 6'b010111) ? (operand_A >= operand_B): //Unsigned Greater Than or Equal To (BGEU)
