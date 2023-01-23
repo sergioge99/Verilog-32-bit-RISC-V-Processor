@@ -1,7 +1,7 @@
 //include "core_defines.vh"
 
 module C_top(
-  input clock, reset,icache_stall,
+  input clock, reset, icache_stall, mul_stall,
   input [31:0] ac_pc,
   input [4:0] ac_write_sel,
   input [31:0] ALU_result, ac_data2,
@@ -24,7 +24,7 @@ dcache dcache( .clk(clock), .reset(reset), .addr(ALU_result), .data(ac_data2), .
 
 //Updating decode registers
 always @(posedge clock) begin
-  if(!dcache_stall && !icache_stall)
+  if(!dcache_stall && !icache_stall && !mul_stall)
   begin
     cw_pc <= ac_pc;
     cw_write_sel <= ac_write_sel;

@@ -18,18 +18,23 @@ module A_top(
   input[4:0] cw_write_sel,
   input[31:0] cw_result,
   
-
+//Output
   output reg [31:0] ac_pc=0,
   output reg [4:0] ac_write_sel=0,
   output reg ac_is_load=0, ac_is_store=0, ac_is_wb=0,
 
   output reg [31:0] ALU_result=0,
-  output reg [31:0] ac_data2
+  output reg [31:0] ac_data2,
 
+  output mul_stall
 );
 
 //Internal wires
   wire [31:0] alu_in1, alu_in2, alu_out;
+
+  
+//stall countdown
+reg [3:0] stall_countdown=4;
 
 // MUX 1
 assign alu_in1 = (ac_is_wb && !ac_is_load && ac_write_sel==da_read_sel1)? ALU_result:
@@ -42,6 +47,10 @@ assign alu_in2 = (da_is_imm)? da_imm32:
                   (cw_is_wb && cw_write_sel==da_read_sel2)? cw_result:
                   da_data2;
 
+//MUL 5-stage simulation
+assign mul_stall =  ((da_ALU_Control == 6'b000010) && (stall_countdown!=0))? 1:
+                    0;
+
 //ALU
 alu alu(
   .ALU_Control(da_ALU_Control),
@@ -53,7 +62,17 @@ alu alu(
 
 //Updating decode registers
 always @(posedge clock) begin
-  if(!dcache_stall && !icache_stall) begin
+  if((da_ALU_Control == 6'b000010) && stall_countdown==0 && (!dcache_stall && !icache_stall)) begin
+		stall_countdown = 4;
+	end
+  else begin
+    if((da_ALU_Control == 6'b000010) && stall_countdown>0) begin
+		  stall_countdown = stall_countdown -1;
+	  end
+  end
+
+
+  if(!dcache_stall && !icache_stall && !mul_stall) begin
     ac_pc <= da_pc;
     ac_write_sel <= da_write_sel;
     ac_is_load <= da_is_load;
@@ -62,6 +81,7 @@ always @(posedge clock) begin
     ALU_result <= alu_out;
     ac_data2 <= da_data2;
   end 
+
 end
 
 
