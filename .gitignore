@@ -1,5 +1,7 @@
 #exclude all
 **
+vsim.wlf
 
 #exceptions
 !**.v
+!**.docx
