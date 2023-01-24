@@ -1,6 +1,6 @@
-//include "core_defines.vh"
 
 module A_top(
+  //Input
   input clock, reset,
   input dcache_stall,icache_stall,
   input [31:0] da_pc,
@@ -12,29 +12,22 @@ module A_top(
   input [31:0] da_imm32,
   input [5:0] da_ALU_Control,
   input da_is_load, da_is_store, da_is_wb, da_is_imm,
-
-//Bypasses
   input cw_is_wb,
   input[4:0] cw_write_sel,
   input[31:0] cw_result,
-  
 //Output
   output reg [31:0] ac_pc=0,
   output reg [4:0] ac_write_sel=0,
   output reg ac_is_load=0, ac_is_store=0, ac_is_wb=0,
-
   output reg [31:0] ALU_result=0,
   output reg [31:0] ac_data2,
-
   output mul_stall
 );
 
 //Internal wires
-  wire [31:0] alu_in1, alu_in2, alu_out;
-
-  
-//stall countdown
+wire [31:0] alu_in1, alu_in2, alu_out;
 reg [3:0] stall_countdown=4;
+
 
 // MUX 1
 assign alu_in1 = (ac_is_wb && !ac_is_load && ac_write_sel==da_read_sel1)? ALU_result:
@@ -60,7 +53,7 @@ alu alu(
 );
 
 
-//Updating decode registers
+//Update registers
 always @(posedge clock) begin
   if((da_ALU_Control == 6'b000010) && stall_countdown==0 && (!dcache_stall && !icache_stall)) begin
 		stall_countdown = 4;
@@ -70,7 +63,6 @@ always @(posedge clock) begin
 		  stall_countdown = stall_countdown -1;
 	  end
   end
-
 
   if(!dcache_stall && !icache_stall && !mul_stall) begin
     ac_pc <= da_pc;
@@ -83,7 +75,5 @@ always @(posedge clock) begin
   end 
 
 end
-
-
 
 endmodule

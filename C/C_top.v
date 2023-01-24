@@ -1,11 +1,12 @@
-//include "core_defines.vh"
 
 module C_top(
+  //Inputs
   input clock, reset, icache_stall, mul_stall,
   input [31:0] ac_pc,
   input [4:0] ac_write_sel,
   input [31:0] ALU_result, ac_data2,
   input ac_is_load, ac_is_store, ac_is_wb,
+  //Outputs
   output reg [31:0] cw_pc=0,
   output reg [4:0] cw_write_sel=0,
   output reg [31:0] cw_result=0,
@@ -32,6 +33,5 @@ always @(posedge clock) begin
     cw_is_wb <= ac_is_wb;
   end
 end
-
 
 endmodule

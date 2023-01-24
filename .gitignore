@@ -5,3 +5,4 @@ vsim.wlf
 #exceptions
 !**.v
 !**.docx
+!**.pdf

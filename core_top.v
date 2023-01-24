@@ -1,4 +1,3 @@
-`include "core_defines.v"
 
 module core_top(
   input clock, reset
@@ -7,10 +6,36 @@ module core_top(
 //Branch wires
 wire br_en;
 wire [31:0] br_addr;
-
 //F-D wires
 wire [31:0] fd_pc, fd_instr;
 wire load_stall, branch_stall, dcache_stall, icache_stall, mul_stall;
+//W-D wires
+wire w_regfile;
+wire [4:0] sel_regfile;
+wire [31:0] data_regfile;
+//D-A wires
+wire [31:0] da_pc;
+wire [4:0] da_write_sel;
+wire da_is_wb;
+wire [4:0] da_read_sel1;
+wire [4:0] da_read_sel2;
+wire [31:0] da_data1;
+wire [31:0] da_data2;
+wire [31:0] da_imm32;
+wire [5:0] da_ALU_Control;
+wire da_is_imm;
+wire da_is_load, da_is_store;
+//A-C wires
+wire [31:0] ac_pc;
+wire [4:0] ac_write_sel;
+wire ac_is_load, ac_is_store, ac_is_wb;
+wire [31:0] ALU_result, ac_data2;
+//C-WB wires
+wire [31:0] cw_pc;
+wire [4:0] cw_write_sel;
+wire [31:0] cw_result;
+wire cw_is_wb;
+
 
 //F Stage
 F_top F_top(
@@ -28,30 +53,6 @@ F_top F_top(
   .fd_instr(fd_instr),
   .icache_stall(icache_stall)
 );
-
-//W-D wires
-wire w_regfile;
-wire [4:0] sel_regfile;
-wire [31:0] data_regfile;
-
-//D-A wires
-wire [31:0] da_pc;
-wire [4:0] da_write_sel;
-wire da_is_wb;
-wire [4:0] da_read_sel1;
-wire [4:0] da_read_sel2;
-wire [31:0] da_data1;
-wire [31:0] da_data2;
-wire [31:0] da_imm32;
-wire [5:0] da_ALU_Control;
-wire da_is_imm;
-wire da_is_load, da_is_store;
-
-//A-C wires
-wire [31:0] ac_pc;
-wire [4:0] ac_write_sel;
-wire ac_is_load, ac_is_store, ac_is_wb;
-wire [31:0] ALU_result, ac_data2;
 
 //D Stage
 D_top D_top(
@@ -88,15 +89,6 @@ D_top D_top(
   .da_is_imm(da_is_imm)
 );
 
-
-
-//C-WB wires
-wire [31:0] cw_pc;
-wire [4:0] cw_write_sel;
-wire [31:0] cw_result;
-wire cw_is_wb;
-
-
 //A Stage
 A_top A_top(
   //Inputs
@@ -130,10 +122,9 @@ A_top A_top(
   .mul_stall(mul_stall)
 );
 
-
-
 //C Stage
 C_top C_top(
+  //Inputs
   .clock(clock),
   .reset(reset),
   .icache_stall(icache_stall),
@@ -145,6 +136,7 @@ C_top C_top(
   .ac_is_load(ac_is_load), 
   .ac_is_store(ac_is_store), 
   .ac_is_wb(ac_is_wb),
+  //Outputs
   .cw_pc(cw_pc),
   .cw_write_sel(cw_write_sel),
   .cw_result(cw_result),
@@ -152,15 +144,16 @@ C_top C_top(
   .dcache_stall(dcache_stall)
 );
 
-
 //W Stage
 W_top W_top(
+  //Inputs
   .clock(clock),
   .reset(reset),
   .cw_pc(cw_pc),
   .cw_write_sel(cw_write_sel),
   .cw_result(cw_result),
   .cw_is_wb(cw_is_wb),
+  //Outputs
   .w_write_sel(sel_regfile),
   .w_result(data_regfile),
   .w_is_wb(w_regfile)

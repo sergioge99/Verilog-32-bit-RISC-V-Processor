@@ -1,6 +1,6 @@
-//include "core_defines.sv"
 
 module F_top(
+  //Inputs
   input clock, reset,
   input load_stall,
   input mul_stall,
@@ -8,6 +8,7 @@ module F_top(
   input dcache_stall,
   input br_en,
   input [31:0] br_addr,
+  //Outputs
   output reg [31:0] fd_pc = 0,
   output reg [31:0] fd_instr = 0,
   output icache_stall
@@ -35,8 +36,6 @@ always @(posedge clock) begin
       PC_reg <= br_addr;
     end
   end
-
 end
-
 
 endmodule
