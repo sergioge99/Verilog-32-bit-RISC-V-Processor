@@ -30,13 +30,13 @@ reg [3:0] stall_countdown=4;
 
 
 // MUX 1
-assign alu_in1 = (ac_is_wb && !ac_is_load && ac_write_sel==da_read_sel1)? ALU_result:
+assign alu_in1 = (ac_is_wb && ac_write_sel==da_read_sel1)? ALU_result:
                   (cw_is_wb && cw_write_sel==da_read_sel1)? cw_result:
                   da_data1;
 
 // MUX 2
 assign alu_in2 = (da_is_imm)? da_imm32:
-                  (ac_is_wb && !ac_is_load && ac_write_sel==da_read_sel2)? ALU_result:
+                  (ac_is_wb && ac_write_sel==da_read_sel2)? ALU_result:
                   (cw_is_wb && cw_write_sel==da_read_sel2)? cw_result:
                   da_data2;
 

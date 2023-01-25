@@ -96,20 +96,19 @@ regfile regfile(
 );
 
 // Stall control
-assign load_stall = (da_is_load && (read_sel1==da_write_sel || read_sel2==da_write_sel))? 1:
+assign load_stall = (da_is_load && (read_sel1==da_write_sel || read_sel2==da_write_sel))? 1: // load-use dist1
               0;
-assign branch_stall = ((opcode == 7'b1100011) && ((da_is_wb && da_write_sel==read_sel2) || (da_is_wb && da_write_sel==read_sel1)))? 1:
+assign branch_stall = ((opcode == 7'b1100011) && ((da_is_wb && da_write_sel==read_sel2) || (da_is_wb && da_write_sel==read_sel1)))? 1: //producer-branch dist1
               0;
 
 //branch test
-reg smart_branch = 0;
 assign branch_en = 
           ((opcode == 7'b1100011) && (funct3 == 3'b000) && (ac_result == data1) && (ac_is_wb && ac_write_sel==read_sel2))? 1: //beq bypass dist2 reg2
 					((opcode == 7'b1100011) && (funct3 == 3'b001) && (ac_result != data1) && (ac_is_wb && ac_write_sel==read_sel2))? 1: //bne bypass dist2 reg2
           ((opcode == 7'b1100011) && (funct3 == 3'b000) && (ac_result == data2) && (ac_is_wb && ac_write_sel==read_sel1))? 1: //beq bypass dist2 reg1
 					((opcode == 7'b1100011) && (funct3 == 3'b001) && (ac_result != data2) && (ac_is_wb && ac_write_sel==read_sel1))? 1: //bne bypass dist2 reg1
-          ((opcode == 7'b1100011) && (funct3 == 3'b000) && (data1 == data2) && !smart_branch)? 1: //beq
-					((opcode == 7'b1100011) && (funct3 == 3'b001) && (data1 != data2) && !smart_branch)? 1: //bne
+          ((opcode == 7'b1100011) && (funct3 == 3'b000) && (data1 == data2) && !branch_stall)? 1: //beq
+					((opcode == 7'b1100011) && (funct3 == 3'b001) && (data1 != data2) && !branch_stall)? 1: //bne
           0;
 //branch PC calculations 					 
 assign branch_PC = (opcode == 7'b1100011)? (fd_pc + sb_imm_32): //branch instructions 
@@ -132,10 +131,8 @@ always @(posedge clock) begin
       da_is_load <= is_load;
       da_is_store <= is_store;
       da_is_imm <= is_imm;
-      smart_branch <= 0;
     end
     else begin
-      smart_branch <= 0;
       da_pc <= 0;
       da_write_sel <= 0;
       da_is_wb <= 0;
@@ -148,7 +145,6 @@ always @(posedge clock) begin
       da_is_load <= 0;
       da_is_store <= 0;
       da_is_imm <= 0;
-      if(branch_stall) smart_branch <= 1;
     end
   end
 end
