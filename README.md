@@ -1,4 +1,4 @@
-# pa_core
+# Verilog design for a 32-bit RISC-V Processor
 PROCESSOR ARCHITECTURE
 
 Final Project: Verilog design for a 32-bit RISC-V Processor
